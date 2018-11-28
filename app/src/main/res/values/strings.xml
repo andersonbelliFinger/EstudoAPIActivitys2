@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">EstudoAPIActivitys</string>
+    <string name="title_activity_detalhes">DetalhesActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name">Name</string>
+    <string name="desc">Desc</string>
+    <string name="nome">Nome</string>
+    <string name="id">Id</string>
+    <string name="description">Description</string>
+    <string name="selecione_uma_conversa_abaixo">Selecione uma conversa abaixo</string>
+</resources>
