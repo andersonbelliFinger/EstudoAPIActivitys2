@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.abelli.estudoapiactivitys.ChatsListener;
+import com.abelli.estudoapiactivitys.listener.ChatsListener;
 import com.abelli.estudoapiactivitys.R;
 import com.abelli.estudoapiactivitys.entities.ChatsEntity;
 import com.abelli.estudoapiactivitys.viewholder.ContactsViewHolder;
@@ -27,9 +27,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsViewHolder> {
     @Override
     public void onBindViewHolder(ContactsViewHolder guestViewHolder, int position) {
         ChatsEntity guestEntity = mGuestEntityList.get(position);
-        guestEntity.setId(guestEntity.getId());
+        guestEntity.setName(guestEntity.getName());
         guestEntity.setDescription(guestEntity.getDescription());
-        //guestViewHolder.bindData(guestEntity);
         guestViewHolder.bindData(guestEntity, this.mChatsListener);
     }
 

@@ -1,6 +1,5 @@
-package com.abelli.estudoapiactivitys;
+package com.abelli.estudoapiactivitys.views;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,41 +8,32 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.abelli.estudoapiactivitys.listener.ChatsListener;
+import com.abelli.estudoapiactivitys.R;
 import com.abelli.estudoapiactivitys.adapter.ContactsAdapter;
 import com.abelli.estudoapiactivitys.constants.ChatConstants;
-import com.abelli.estudoapiactivitys.data.RetrieveDataAPI;
 import com.abelli.estudoapiactivitys.entities.ChatsEntity;
-import com.abelli.estudoapiactivitys.viewholder.ContactsViewHolder;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.Parser;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListFragment extends Fragment {
@@ -158,7 +148,7 @@ public class ListFragment extends Fragment {
     private void retornaValores(String id_valor, String name_valor,String desc_valor) {
         ChatsEntity mChatsEntity;
         mChatsEntity = new ChatsEntity(id_valor, name_valor, desc_valor);
-        mChatsEntity.setId(id_valor);
+        mChatsEntity.setName(name_valor);
         mChatsEntity.setDescription(desc_valor);
 
         listContents.add(mChatsEntity);

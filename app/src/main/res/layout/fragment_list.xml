@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListFragment">
+    tools:context=".views.ListFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,9 +15,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@color/minhaCor"
+            android:paddingBottom="10sp"
+            android:background="@drawable/rounded_edge"
             android:orientation="horizontal">
+            <!--android:background="@color/minhaCor"-->
 
             <TextView
                 android:id="@+id/head_list"
@@ -29,18 +30,24 @@
                 android:text="@string/selecione_uma_conversa_abaixo"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/minhaCor"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_contacts"
-            android:name="@+name/recycler_contacts"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="@color/colorAccent"
-            tools:itemCount="15" />
+            android:background="@color/colorPrimary">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_contacts"
+                android:name="@+name/recycler_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/colorAccent"
+                tools:itemCount="15" />
+        </LinearLayout>
 
     </LinearLayout>
 

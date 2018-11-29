@@ -1,18 +1,14 @@
 package com.abelli.estudoapiactivitys.viewholder;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.ListFragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.abelli.estudoapiactivitys.ChatsListener;
+import com.abelli.estudoapiactivitys.listener.ChatsListener;
 import com.abelli.estudoapiactivitys.R;
 import com.abelli.estudoapiactivitys.entities.ChatsEntity;
 import java.util.List;
@@ -39,7 +35,7 @@ public class ContactsViewHolder extends RecyclerView.ViewHolder{
     public void bindData(final ChatsEntity guestEntity, final ChatsListener listener) {
     //public void bindData(ChatsEntity guestEntity) {
         // Objeto que será clicado
-        mTextName.setText(guestEntity.getId());
+        mTextName.setText(guestEntity.getName());
         mTextDesc.setText(guestEntity.getDescription());
 
         //Manipulação do objeto clicado

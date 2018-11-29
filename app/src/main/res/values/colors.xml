@@ -6,4 +6,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorDarkButton">#636061</color>
     <color name="colorDarkGray">#595858</color>
+    <color name="colorTransparent">#00616161</color>
 </resources>

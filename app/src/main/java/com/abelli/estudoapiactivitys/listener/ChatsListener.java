@@ -1,4 +1,4 @@
-package com.abelli.estudoapiactivitys;
+package com.abelli.estudoapiactivitys.listener;
 
 public interface ChatsListener {
 
