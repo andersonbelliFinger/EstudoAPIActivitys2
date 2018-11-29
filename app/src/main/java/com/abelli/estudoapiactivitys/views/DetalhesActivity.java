@@ -22,17 +22,17 @@ public class DetalhesActivity extends AppCompatActivity {
         Bundle bundle = i.getExtras();
         if (bundle != null) {
 
-            String id = bundle.getString("id");
-            String nome = bundle.getString("name");
-            String desc = bundle.getString("desc");
-
-            TextView textId = findViewById(R.id.id);
-            TextView textNome = findViewById(R.id.nome);
-            TextView textDesc = findViewById(R.id.desc);
-
-            textId.setText(id);
-            textNome.setText(nome);
-            textDesc.setText(desc);
+//            String id = bundle.getString("id");
+//            String nome = bundle.getString("name");
+//            String desc = bundle.getString("desc");
+//
+//            TextView textId = findViewById(R.id.id);
+//            TextView textNome = findViewById(R.id.nome);
+//            TextView textDesc = findViewById(R.id.desc);
+//
+//            textId.setText(id);
+//            textNome.setText(nome);
+//            textDesc.setText(desc);
         }
     }
 

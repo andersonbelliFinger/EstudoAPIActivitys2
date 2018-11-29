@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -78,22 +79,33 @@ public class ListFragment extends Fragment {
         this.mChatsListener = new ChatsListener() {
             // Ao clicar em algum item da lista, será redirecionado para a página de formulário
             @Override
-            public void onChatClick(String id, String name,String desc) {
+            public void onChatClick(String id, String name, String desc) {
                 Bundle bundle = new Bundle();
                 bundle.putString("id", id);
                 bundle.putString("name", name);
                 bundle.putString("desc", desc);
 
-                Intent i = new Intent(getContext(), DetalhesActivity.class);
-                i.putExtras(bundle);
-                startActivity(i, bundle);
+                FragmentManager fm = getFragmentManager();
+                DetalhesFragment detalhesFragment = new DetalhesFragment();
+                detalhesFragment.setArguments(bundle);
+                if (fm != null) {
+                    fm.beginTransaction().replace(R.id.frame_content, detalhesFragment).addToBackStack(" tag ").commit();
+                }
             }
         };
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        listContents.clear();
+        listContents.clear();
+
         this.loadChats();
         this.retornaList();
-
-        return view;
     }
 
     public void loadChats() {
@@ -128,7 +140,7 @@ public class ListFragment extends Fragment {
                         String name_json = jo.getString("name");
                         String desc_json = jo.getString("description");
 
-                        retornaValores(id_json, name_json,desc_json);
+                        retornaValores(id_json, name_json, desc_json);
                     }
                 } catch (JSONException e) {
                     Toast.makeText(mContext, e.getMessage() + "Deu ruim", Toast.LENGTH_LONG).show();
@@ -145,7 +157,7 @@ public class ListFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    private void retornaValores(String id_valor, String name_valor,String desc_valor) {
+    private void retornaValores(String id_valor, String name_valor, String desc_valor) {
         ChatsEntity mChatsEntity;
         mChatsEntity = new ChatsEntity(id_valor, name_valor, desc_valor);
         mChatsEntity.setName(name_valor);
@@ -164,6 +176,7 @@ public class ListFragment extends Fragment {
         //this.mViewHolder.mRecyclerViewContacts.addItemDecoration(new DividerItemDecoration(mContext,LinearLayout.VERTICAL));
 
         this.mViewHolder.mRecyclerViewContacts.setAdapter(this.mGuestListAdapter);
+        this.mGuestListAdapter.notifyDataSetChanged();
         Log.d("mGuestListAdapter", mGuestListAdapter.toString());
         Log.d("SizeEHesse5", String.valueOf(listContents.size()));
     }
