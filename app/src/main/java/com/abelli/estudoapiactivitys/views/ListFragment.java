@@ -48,6 +48,7 @@ public class ListFragment extends Fragment {
 
     List<ChatsEntity> listAux;
     public List<ChatsEntity> listContents;
+    public String[] listBackup = {"Bauru1","Presunto1, queijo1","Carne1","Carne1, queijo1"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,8 @@ public class ListFragment extends Fragment {
         //Oberter a lista (recycler)
         this.mViewHolder.mRecyclerViewContacts = view.findViewById(R.id.recycler_contacts);
         this.mViewHolder.mTextHead = view.findViewById(R.id.head_list);
+        this.mViewHolder.mTextOffline = view.findViewById(R.id.txt_offline);
+        this.mViewHolder.mTextOffline.setVisibility(0);
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -144,13 +147,15 @@ public class ListFragment extends Fragment {
                     }
                 } catch (JSONException e) {
                     Toast.makeText(mContext, e.getMessage() + "Deu ruim", Toast.LENGTH_LONG).show();
+                    Log.d("DeuRUIMaqui1", "oooooo");
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(mContext, "Error" + error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Erro ao carregar sabores!", Toast.LENGTH_LONG).show();
+                Log.d("CONEXAO", error.toString());
             }
         });
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
@@ -163,20 +168,36 @@ public class ListFragment extends Fragment {
         mChatsEntity.setName(name_valor);
         mChatsEntity.setDescription(desc_valor);
 
-        listContents.add(mChatsEntity);
-        listAux = listContents;
+        if(id_valor == null){
+            Log.d("ERRONULO1","Toaqui man");
+        }else{
+            listContents.add(mChatsEntity);
+            listAux = listContents;
+        }
 
         retornaList();
     }
 
     private void retornaList() {
-        this.mGuestListAdapter = new ContactsAdapter(listContents, this.mChatsListener);
-        this.mViewHolder.mRecyclerViewContacts.setLayoutManager(new LinearLayoutManager(getContext()));
-        this.mViewHolder.mRecyclerViewContacts.setHasFixedSize(true);
-        //this.mViewHolder.mRecyclerViewContacts.addItemDecoration(new DividerItemDecoration(mContext,LinearLayout.VERTICAL));
+        if (listContents.size() == 0) {
+            this.mViewHolder.mTextOffline.setVisibility(1);
+            this.mViewHolder.mTextOffline.setTextColor(R.color.minhaCor);
+            this.mGuestListAdapter = new ContactsAdapter(listBackup, this.mChatsListener);
+            this.mViewHolder.mRecyclerViewContacts.setLayoutManager(new LinearLayoutManager(getContext()));
+            this.mViewHolder.mRecyclerViewContacts.setHasFixedSize(true);
+            //this.mViewHolder.mRecyclerViewContacts.addItemDecoration(new DividerItemDecoration(mContext,LinearLayout.VERTICAL));
 
-        this.mViewHolder.mRecyclerViewContacts.setAdapter(this.mGuestListAdapter);
-        this.mGuestListAdapter.notifyDataSetChanged();
+            this.mViewHolder.mRecyclerViewContacts.setAdapter(this.mGuestListAdapter);
+        } else {
+            this.mViewHolder.mTextOffline.setVisibility(0);
+            this.mGuestListAdapter = new ContactsAdapter(listContents, this.mChatsListener);
+            this.mViewHolder.mRecyclerViewContacts.setLayoutManager(new LinearLayoutManager(getContext()));
+            this.mViewHolder.mRecyclerViewContacts.setHasFixedSize(true);
+            //this.mViewHolder.mRecyclerViewContacts.addItemDecoration(new DividerItemDecoration(mContext,LinearLayout.VERTICAL));
+
+            this.mViewHolder.mRecyclerViewContacts.setAdapter(this.mGuestListAdapter);
+            this.mGuestListAdapter.notifyDataSetChanged();
+        }
         Log.d("mGuestListAdapter", mGuestListAdapter.toString());
         Log.d("SizeEHesse5", String.valueOf(listContents.size()));
     }
@@ -184,5 +205,6 @@ public class ListFragment extends Fragment {
     private static class ViewHolder {
         RecyclerView mRecyclerViewContacts;
         TextView mTextHead;
+        TextView mTextOffline;
     }
 }
