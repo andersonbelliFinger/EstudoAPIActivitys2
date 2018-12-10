@@ -1,185 +1,117 @@
 package com.abelli.estudoapiactivitys.data;
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v7.widget.RecyclerView;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.abelli.estudoapiactivitys.R;
+import com.abelli.estudoapiactivitys.constants.ChatConstants;
 import com.abelli.estudoapiactivitys.entities.ChatsEntity;
+import com.abelli.estudoapiactivitys.views.ListFragment;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RetrieveDataAPI {
 
-    private RecyclerView mRecyclerView;
-    private ListView listView;
-    private List<ChatsEntity> chatsAdapter;
-
-    private ChatsEntity mChatsEntity;
-
-    private int count = 0;
-    private int getCount() {return count;}
-
-    private String str = "";
-    public String getStr() {return str;}
-    private void setStr(String str) {this.str = str;}
-
-    private String[] strList = {};
+    private ViewHolder mViewHolder = new ViewHolder();
 
     private Context mContext;
+    public List<ChatsEntity> list_API;
 
-   public void getJSON(final String urlWebService, final Context context) {
-        @SuppressLint("StaticFieldLeak")
-        class GetJSON extends AsyncTask<Void, Void, String> {
+    public RetrieveDataAPI(Context context, String table_name) {
+        this.mViewHolder.table_API = table_name;
+        this.mContext = context;
+    }
 
-          @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
+    private void loadChats() {
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Carregando lista");
+        progressDialog.setMessage("Carregando...");
+        progressDialog.show();
+
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.cancel();
             }
+        };
 
-           @Override
-            public void onPostExecute(String s) {
-                super.onPostExecute(s);
+        //Timer para a progress bar
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 5000);
+
+        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.GET,
+                ChatConstants.URL_PASTEL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
                 try {
-                    loadIntoListView(s,context);
+                    JSONArray jsonArray = new JSONArray(response);
+
+                    //mViewHolder.valores = new String[jsonArray.length()];
+                    for (int i = 0; i < jsonArray.length(); i++) {
+
+                        JSONObject jo = jsonArray.getJSONObject(i);
+
+                        //mViewHolder.valores[i] = jo.toString();
+                        mViewHolder.valores = jo.toString();
+
+                        ListFragment listFragment = new ListFragment();
+                        listFragment.recebeDados(mViewHolder.valores);
+
+                        carregaValoresRetornados(mViewHolder.valores);
+                    }
                 } catch (JSONException e) {
+                    Toast.makeText(mContext, e.getMessage() + "Problema ao carregar JSON!", Toast.LENGTH_LONG).show();
+                    Log.d("RetrieveDataApi", "JsonException: " + e);
                     e.printStackTrace();
                 }
-                Toast.makeText(context, s, Toast.LENGTH_LONG).show();
-
-                setStr(s);
-                String findStr = "id";
-                int lastIndex = 0;
-
-                while(lastIndex != -1){
-                    lastIndex = str.indexOf(findStr,lastIndex);
-                    if(lastIndex != -1){
-                        count++;
-                        lastIndex += findStr.length();
-                    }
-                }
-                retornaCount(count);
-                retornaJson(s);
-                Log.d("COUNT",String.valueOf(count));
             }
-
-            //in this method we are fetching the json string
+        }, new Response.ErrorListener() {
             @Override
-            protected String doInBackground(Void... voids) {
-                try {
-                    //creating a URL
-                    URL url = new URL(urlWebService);
-
-                    //Opening the URL using HttpURLConnection
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-                    //StringBuilder object to read the string from the service
-                    StringBuilder sb = new StringBuilder();
-
-                    //We will use a buffered reader to read the string from service
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-                    //A simple string to read values from each line
-                    String json;
-
-                    //reading until we don't find null
-                    while ((json = bufferedReader.readLine()) != null) {
-
-                        //appending it to string builder
-                        sb.append(json + "\n");
-                    }
-
-                    //finally returning the read string
-                    return sb.toString().trim();
-                } catch (Exception e) {
-                    return null;
-                }
-
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(mContext, "Erro ao carregar dados!", Toast.LENGTH_LONG).show();
+                Log.d("CONEXAO", error.toString());
             }
-        }
-
-        //creating asynctask object and executing it
-        GetJSON getJSON = new GetJSON();
-
-        List test = (List) getJSON;
-
-        getJSON.execute();
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        requestQueue.add(stringRequest);
     }
 
-    private String retornaJson(String json){
-        return json;
+    public class ViewHolder{
+        private String table_API;
+        //private String[] valores;
+        private String valores;
     }
 
-    private int retornaCount(int i){
-        count = i;
-        Log.d("i",String.valueOf(i));
-        Log.d("COUNT1",String.valueOf(count));
-        Log.d("COUNT2",String.valueOf(getCount()));
-        return i;
+    public void carregaValoresRetornados(String valoresAPI) {
+        mViewHolder.valores = valoresAPI;
     }
 
-    private void loadIntoListView(String json, Context context) throws JSONException {
-        //creating a json array from the json string
-        JSONArray jsonArray = new JSONArray(json);
-
-        //creating a string array for listview
-        String[] chats = new String[jsonArray.length()];
-
-        //looping through all the elements in json array
-        for (int i = 0; i < jsonArray.length(); i++) {
-
-            //getting json object from the json array
-            JSONObject obj = jsonArray.getJSONObject(i);
-
-            //getting the NAME from the json object and putting it inside string array
-            chats[i] = obj.getString("NAME");
-        }
-
-        //the array adapter to load data into list
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, chats);
-        listView.setAdapter(arrayAdapter);
-
-//        //attaching adapter to listview
-//        mRecyclerView.setAdapter(arrayAdapter);
+    public String retornaValoresRetornados() {
+        loadChats();
+        return mViewHolder.valores;
     }
-    private void loadIntoListView1(String json, Context context) throws JSONException {
-        //creating a json array from the json string
-        JSONArray jsonArray = new JSONArray(json);
 
-        //creating a string array for listview
-        String[] chats = new String[jsonArray.length()];
+//    public void carregaValoresRetornados(String[] valoresAPI) {
+//        mViewHolder.valores = valoresAPI;
+//    }
+//
+//    public String[] retornaValoresRetornados() {
+//        loadChats();
+//        return mViewHolder.valores;
+//    }
 
-        //looping through all the elements in json array
-        for (int i = 0; i < jsonArray.length(); i++) {
-
-            //getting json object from the json array
-            JSONObject obj = jsonArray.getJSONObject(i);
-
-            //getting the NAME from the json object and putting it inside string array
-            chats[i] = obj.getString("NAME");
-        }
-
-        //the array adapter to load data into list
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, chats);
-        listView.setAdapter(arrayAdapter);
-
-//        //attaching adapter to listview
-//        mRecyclerView.setAdapter(arrayAdapter);
-    }
 }

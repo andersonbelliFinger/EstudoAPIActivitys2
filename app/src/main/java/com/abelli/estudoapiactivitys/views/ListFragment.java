@@ -46,6 +46,8 @@ public class ListFragment extends Fragment {
     private ContactsAdapter mGuestListAdapter;
     private ChatsEntity mChatsEntity;
 
+    private String recebidoAPI;
+
     List<ChatsEntity> listAux;
     public List<ChatsEntity> listContents;
     public String[] listBackup = {"Bauru1","Presunto1, queijo1","Carne1","Carne1, queijo1"};
@@ -67,7 +69,7 @@ public class ListFragment extends Fragment {
         this.mViewHolder.mRecyclerViewContacts = view.findViewById(R.id.recycler_contacts);
         this.mViewHolder.mTextHead = view.findViewById(R.id.head_list);
         this.mViewHolder.mTextOffline = view.findViewById(R.id.txt_offline);
-        this.mViewHolder.mTextOffline.setVisibility(0);
+        this.mViewHolder.mTextOffline.setVisibility(View.GONE);
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -129,7 +131,7 @@ public class ListFragment extends Fragment {
         pdCanceller.postDelayed(progressRunnable, 5000);
 
         StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.GET,
-                ChatConstants.URL_DATA, new Response.Listener<String>() {
+                ChatConstants.URL_PASTEL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
@@ -162,6 +164,24 @@ public class ListFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
+    public void recebeDados(String recebido) throws JSONException {
+        recebidoAPI = recebido;
+
+        JSONObject jsonObject = new JSONObject(recebido);
+
+        for (int i = 0; i < jsonObject.length(); i++) {
+            String id = jsonObject.getString("id");
+            String name = jsonObject.getString("name");
+            String description = jsonObject.getString("description");
+
+            Log.d("ListFragment", "id: " + id);
+            Log.d("ListFragment", "name: " + name);
+            Log.d("ListFragment", "description: " + description);
+
+            retornaValores(id, name, description);
+        }
+    }
+
     private void retornaValores(String id_valor, String name_valor, String desc_valor) {
         ChatsEntity mChatsEntity;
         mChatsEntity = new ChatsEntity(id_valor, name_valor, desc_valor);
@@ -180,8 +200,8 @@ public class ListFragment extends Fragment {
 
     private void retornaList() {
         if (listContents.size() == 0) {
-            this.mViewHolder.mTextOffline.setVisibility(1);
-            this.mViewHolder.mTextOffline.setTextColor(R.color.minhaCor);
+            this.mViewHolder.mTextOffline.setVisibility(View.VISIBLE);
+            //this.mViewHolder.mTextOffline.setTextColor(R.color.minhaCor);
             this.mGuestListAdapter = new ContactsAdapter(listBackup, this.mChatsListener);
             this.mViewHolder.mRecyclerViewContacts.setLayoutManager(new LinearLayoutManager(getContext()));
             this.mViewHolder.mRecyclerViewContacts.setHasFixedSize(true);
@@ -189,7 +209,7 @@ public class ListFragment extends Fragment {
 
             this.mViewHolder.mRecyclerViewContacts.setAdapter(this.mGuestListAdapter);
         } else {
-            this.mViewHolder.mTextOffline.setVisibility(0);
+            this.mViewHolder.mTextOffline.setVisibility(View.GONE);
             this.mGuestListAdapter = new ContactsAdapter(listContents, this.mChatsListener);
             this.mViewHolder.mRecyclerViewContacts.setLayoutManager(new LinearLayoutManager(getContext()));
             this.mViewHolder.mRecyclerViewContacts.setHasFixedSize(true);
